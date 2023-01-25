@@ -16,7 +16,7 @@ const db = mysql.createConnection(
     console.log(`Connected to the employee_db database.`)
   );
     
-  app.post('/api/new-employee', ({ body }, res) => {
+  app.post('/api/employee', ({ body }, res) => {
     const sql = `INSERT INTO employee_db (first_name, last_name, role_id, Manager_id)
       VALUES (?)`;
     const params = [body.employee_name];
