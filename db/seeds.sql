@@ -1,34 +1,16 @@
-USE employees_db;
-
-INSERT INTO department (name)
-VALUES ("Finance"),
-       ("Engineering"),
-       ("Founders"),
-       ("Human Resources");
-       
+INSERT INTO role_db (title, salary, deparment_id)
+VALUES ( "Founder", 250000.00, 1 ),
+       ( "CEO", 175000.00, 2),
+       ( "Engineer", 145000.00, 3),
+       ( "Manager", 90000.00, 4)
+       ( "Secretary", 60000.00, 5);
 
 
-INSERT INTO role (title, salary, department_id)
-VALUES ("Accountant", 120000, 3),
-       ("Senior Acountant", 130000, 3),
-       ("Senior Engineer", 150000, 2),
-       ("Engineer", 134000, 2),
-       ("HR",80000, 4),
-       ("Founder", 200000, 1),
-       ("Co-Founder", 175000, 1);
-
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Yves", "Moraille", 1, null),
-       ("Henrys", "Legrand", 1, null),
-       ("Zarah", "Moraille", 2, 1),
-       ("Stefano", "Saintil", 2, 2),
-       ("Stanley", "Clervil", 3, 3),
-       ("Ruth", "PierrePaul" , 3, 4),
-       ("Sheila", "Legrand", 4, 3);
-
-    
-
-
+INSERT INTO employee_db (first_name, last_name, role_id, manager_id)
+VALUES ( "Yves-Henry", "Moraille", 10 ),
+       ( "Stanley ", "Clervil", 20),
+       ( "Marie", "Moraille" 30),
+       ( "Zarah", "Moraille" 40, 061813),
+       ( "Secretary",50);
 
        
