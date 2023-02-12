@@ -43,6 +43,7 @@ const init = () => {
 const addNewDepartment = async () => {
   prompt([
     {
+      name: 'department',
       type: 'input',
       message: 'Add the name of the Department'
     }
@@ -61,17 +62,17 @@ const addNewDepartment = async () => {
       },
       {
 
-        name: 'Department',
+        name: 'department',
         type: 'list',
         choices: 'departments',
         message: 'Add the Id of the Department'
       },
       {
-        name: 'Salary',
+        name: 'salary',
         type: 'input',
         message: 'Add the Salary of the Employee'
       },
-   
+
       {
         name: 'id',
         type: 'input',
@@ -80,18 +81,67 @@ const addNewDepartment = async () => {
     ])
       .then((response) => {
         deparments.forEach(department => {
-          if (department.name === response.department){
+          if (department.name === response.department) {
             response.department === department.id;
           }
         })
       });
+    db.query(
+      'INSERT INTO employee_db.role SET ',
+      {
+        role: response.role,
+        department: response.department,
+        salary: response.salary,
+        id: response.id,
+      },
+      (error) => {
+if (err) throw err;
+console.log('Succesful')
+      })
+  };
+  const addNewEmployee = async () => {
+    let [managers] = await selectAllNameAndValue('first_name', 'last_name', 'employee', 'id');
+    let [roles] = await selectAllNameAndValue('role', 'id');
+    prompt([
+      {
+        name: 'first_name',
+        type: 'input',
+        message: 'Add Employee First Name'
+      },
+      {
+        name: 'last_name',
+        type: 'input',
+        message: 'Add Employee Last Name'
+      },
+      {
+
+        name: 'manager',
+        type: 'input',
+        message: 'Is the Employee going to be a Manager?'
+        
+      },
+      {
+        name: 'role',
+        type: 'list',
+        message: 'Please Choose a Role for the employee'
+      },
+
+      {
+        name: 'id',
+        type: 'input',
+        message: 'Add id number'
+      }
+    ])
+    .then((response) => {
+      insert('employee', response);
+    });  
 
 
 
 
 
 
-  }
+}
 
 
 
@@ -107,4 +157,4 @@ const addNewDepartment = async () => {
 
 
 
-
+}
