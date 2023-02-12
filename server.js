@@ -1,3 +1,4 @@
+const { response } = require('express');
 const express = require('express');
 const mysql = require('mysql2');
 const PORT = process.env.PORT || 3001;
@@ -7,47 +8,103 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'employee_db'
-    },
-    console.log(`Connected to the employee_db database.`)
-  );
-    
-  app.post('/api/employee', ({ body }, res) => {
-    const sql = `INSERT INTO employee_db (first_name, last_name, role_id, Manager_id)
-      VALUES (?)`;
-    const params = [body.employee_name];
-    
-    db.query(sql, params, (err, result) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: 'success',
-        data: body
-      });
-    });
-  });
+  {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'employee_db'
+  },
+  console.log(`Connected to the employee_db database.`)
+);
 
-  app.get('/api/employee', (req, res) => {
-    const sql = `SELECT id, employee_db AS title FROM employee`;
-    
-    db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
-      }
-      res.json({
-        message: 'success',
-        data: rows
-      });
+
+
+const init = () => {
+  prompt({
+    type: 'list',
+    message: 'What would you like to do?',
+    choices: [
+
+      'View All Employees',
+      'Add Employee',
+      'Update Employee Role',
+      'View All Roles',
+      'Add Role',
+      'View All Departments',
+      'Add Department'
+
+    ],
+  })
+    .then((response)) => {
+  chooseOption(response.type);
+
+
+};
+const addNewDepartment = async () => {
+  prompt([
+    {
+      type: 'input',
+      message: 'Add the name of the Department'
+    }
+  ])
+    .then((response) => {
+      insert('department, response');
     });
-  });
-  
+
+
+  const addNewRole = async () => {
+    prompt([
+      {
+        name: 'role',
+        type: 'input',
+        message: 'The Id of the Role?'
+      },
+      {
+
+        name: 'Department',
+        type: 'list',
+        choices: 'departments',
+        message: 'Add the Id of the Department'
+      },
+      {
+        name: 'Salary',
+        type: 'input',
+        message: 'Add the Salary of the Employee'
+      },
    
-      
+      {
+        name: 'id',
+        type: 'input',
+        message: 'Add id number'
+      }
+    ])
+      .then((response) => {
+        deparments.forEach(department => {
+          if (department.name === response.department){
+            response.department === department.id;
+          }
+        })
+      });
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+  init();
+
+
+
+
+
+
+
 
