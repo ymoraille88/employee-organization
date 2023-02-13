@@ -1,8 +1,9 @@
-const { response } = require('express');
+
 const express = require('express');
 const mysql = require('mysql2');
 const PORT = process.env.PORT || 3001;
 const app = express();
+const inquire = require('inquirer');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -20,8 +21,10 @@ const db = mysql.createConnection(
 
 
 const init = () => {
-  prompt({
+  inquire.prompt({
+
     type: 'list',
+    name: 'type',
     message: 'What would you like to do?',
     choices: [
 
@@ -35,13 +38,49 @@ const init = () => {
 
     ],
   })
-    .then((response)) => {
-  chooseOption(response.type);
+    .then((response) => {
+      switch (response.type) {
+        case 'VIEW ALL DEPARTMENTS': {
+          selectAll('department');
+          break;
+        }
+        case 'VIEW ALL ROLES': {
+          selectAll('role');
+          break;
+        }
 
 
+        case 'View All Employees': {
+          selectAll('employee');
+          break;
+        }
+        case 'ADD A DEPARTMENT': {
+          addNewDepartment();
+          break;
+        }
+        case 'ADD A ROLE': {
+          addNewRole();
+          break;
+        }
+        case 'ADD AN EMPLOYEE': {
+          addNewEmployee();
+          break;
+        }
+        case 'UPDATE AN EMPLOYEE': {
+          updateEmployee();
+          break;
+        }
+        case 'EXIT': {
+          db.end();
+        }
+
+      }
+
+
+    })
 };
 const addNewDepartment = async () => {
-  prompt([
+  inquire.prompt([
     {
       name: 'department',
       type: 'input',
@@ -50,111 +89,129 @@ const addNewDepartment = async () => {
   ])
     .then((response) => {
       insert('department, response');
+    })
+};
+
+
+const addNewRole = async () => {
+  inquire.prompt([
+    {
+      name: 'role',
+      type: 'input',
+      message: 'The Id of the Role?'
+    },
+    {
+
+      name: 'department',
+      type: 'list',
+      choices: 'departments',
+      message: 'Add the Id of the Department'
+    },
+    {
+      name: 'salary',
+      type: 'input',
+      message: 'Add the Salary of the Employee'
+    },
+
+    {
+      name: 'id',
+      type: 'input',
+      message: 'Add id number'
+    }
+  ])
+    .then((response) => {
+      deparments.forEach(department => {
+        if (department.name === response.department) {
+          response.department === department.id;
+        }
+      })
+    });
+  db.query(
+    'INSERT INTO employee_db.role SET ',
+    {
+      role: response.role,
+      department: response.department,
+      salary: response.salary,
+      id: response.id,
+    },
+    (error) => {
+      if (error) throw error;
+      console.log('Succesful')
+    })
+};
+
+const addNewEmployee = async () => {
+  inquire.prompt([
+    {
+      name: 'first_name',
+      type: 'input',
+      message: 'Add Employee First Name'
+    },
+    {
+      name: 'last_name',
+      type: 'input',
+      message: 'Add Employee Last Name'
+    },
+    {
+
+      name: 'manager',
+      type: 'input',
+      message: 'Is the Employee going to be a Manager?'
+
+    },
+    {
+      name: 'role',
+      type: 'list',
+      message: 'Please Choose a Role for the employee'
+    },
+
+    {
+      name: 'id',
+      type: 'input',
+      message: 'Add id number'
+    }
+  ])
+    .then((response) => {
+      insert('employee', response);
+    });
+}
+
+const updateEmployee = async () => {
+  inquire.prompt([
+    {
+      name: 'employee',
+      type: 'list',
+      message: 'Which Employee do you wish to update?',
+      choices: 'employees'
+
+    },
+    {
+      name: 'salary',
+      type: 'input',
+      message: 'Input New Update',
+
+    }
+
+  ])
+    .then((response) => {
+      db.query('UPDATE employee SET salary=?'
+      [response.salary],
+        (error) => {
+          if (error) throw error;
+          console.log('Succesful');
+        })
     });
 
 
-  const addNewRole = async () => {
-    prompt([
-      {
-        name: 'role',
-        type: 'input',
-        message: 'The Id of the Role?'
-      },
-      {
-
-        name: 'department',
-        type: 'list',
-        choices: 'departments',
-        message: 'Add the Id of the Department'
-      },
-      {
-        name: 'salary',
-        type: 'input',
-        message: 'Add the Salary of the Employee'
-      },
-
-      {
-        name: 'id',
-        type: 'input',
-        message: 'Add id number'
-      }
-    ])
-      .then((response) => {
-        deparments.forEach(department => {
-          if (department.name === response.department) {
-            response.department === department.id;
-          }
-        })
-      });
-    db.query(
-      'INSERT INTO employee_db.role SET ',
-      {
-        role: response.role,
-        department: response.department,
-        salary: response.salary,
-        id: response.id,
-      },
-      (error) => {
-if (err) throw err;
-console.log('Succesful')
-      })
-  };
-  const addNewEmployee = async () => {
-    let [managers] = await selectAllNameAndValue('first_name', 'last_name', 'employee', 'id');
-    let [roles] = await selectAllNameAndValue('role', 'id');
-    prompt([
-      {
-        name: 'first_name',
-        type: 'input',
-        message: 'Add Employee First Name'
-      },
-      {
-        name: 'last_name',
-        type: 'input',
-        message: 'Add Employee Last Name'
-      },
-      {
-
-        name: 'manager',
-        type: 'input',
-        message: 'Is the Employee going to be a Manager?'
-        
-      },
-      {
-        name: 'role',
-        type: 'list',
-        message: 'Please Choose a Role for the employee'
-      },
-
-      {
-        name: 'id',
-        type: 'input',
-        message: 'Add id number'
-      }
-    ])
-    .then((response) => {
-      insert('employee', response);
-    });  
-
-
-
-
-
-
 }
 
+function selectAll(type) {
+  let query = `SELECT * FROM ${type};`
+  db.query(query, function (error, data) {
+    if (error) console.log(error)
 
-
-
-
-
-
-  init();
-
-
-
-
-
-
-
+    console.table(data);
+  })
 }
+init();
+
