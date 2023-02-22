@@ -1,12 +1,9 @@
 
-const express = require('express');
 const mysql = require('mysql2');
-const PORT = process.env.PORT || 3001;
-const app = express();
+
 const inquire = require('inquirer');
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+
 
 const db = mysql.createConnection(
   {
@@ -21,13 +18,12 @@ const db = mysql.createConnection(
 
 
 const init = () => {
-  inquire.prompt({
+  inquire.prompt([{
 
     type: 'list',
     name: 'type',
     message: 'What would you like to do?',
     choices: [
-
       'View All Employees',
       'Add Employee',
       'Update Employee Role',
@@ -35,16 +31,15 @@ const init = () => {
       'Add Role',
       'View All Departments',
       'Add Department'
-
     ],
-  })
+  }])
     .then((response) => {
       switch (response.type) {
-        case 'VIEW ALL DEPARTMENTS': {
+        case 'View All Departments': {
           selectAll('department');
           break;
         }
-        case 'VIEW ALL ROLES': {
+        case 'View All Roles': {
           selectAll('role');
           break;
         }
@@ -54,19 +49,19 @@ const init = () => {
           selectAll('employee');
           break;
         }
-        case 'ADD A DEPARTMENT': {
+        case 'Add Department': {
           addNewDepartment();
           break;
         }
-        case 'ADD A ROLE': {
+        case 'Add Role': {
           addNewRole();
           break;
         }
-        case 'ADD AN EMPLOYEE': {
+        case 'Add Employee': {
           addNewEmployee();
           break;
         }
-        case 'UPDATE AN EMPLOYEE': {
+        case 'Update Employee Role': {
           updateEmployee();
           break;
         }
@@ -124,20 +119,22 @@ const addNewRole = async () => {
         if (department.name === response.department) {
           response.department === department.id;
         }
+
       })
+      db.query(
+        'INSERT INTO employee_db.role SET ',
+        {
+          role: response.role,
+          department: response.department,
+          salary: response.salary,
+          id: response.id,
+        },
+        (error) => {
+          if (error) throw error;
+          console.log('Succesful')
+        })
     });
-  db.query(
-    'INSERT INTO employee_db.role SET ',
-    {
-      role: response.role,
-      department: response.department,
-      salary: response.salary,
-      id: response.id,
-    },
-    (error) => {
-      if (error) throw error;
-      console.log('Succesful')
-    })
+ 
 };
 
 const addNewEmployee = async () => {
@@ -177,12 +174,20 @@ const addNewEmployee = async () => {
 }
 
 const updateEmployee = async () => {
+  let query = `SELECT * FROM employee`
+  db.query(query, function (error, data) {
+    if (error) console.log(error)
+console.log(data);
+    // new variable from data variable
+    // new variable => [ {name:'', value: 'id'}, {}, {} ]
+    
+  })
   inquire.prompt([
     {
       name: 'employee',
       type: 'list',
       message: 'Which Employee do you wish to update?',
-      choices: 'employees'
+      choices: [] // <== [ {name: '', value: id }, {}, {} ]
 
     },
     {
@@ -206,11 +211,13 @@ const updateEmployee = async () => {
 }
 
 function selectAll(type) {
-  let query = `SELECT * FROM ${type};`
+  console.log(type);
+  let query = `SELECT * FROM ${type}`
   db.query(query, function (error, data) {
     if (error) console.log(error)
 
     console.table(data);
+    init();
   })
 }
 init();
